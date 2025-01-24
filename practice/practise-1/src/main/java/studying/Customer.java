@@ -15,6 +15,6 @@ public class Customer {
 
     public Customer(String name) {
         this.name = name;
-    }
+    } // Пример агрегации, конструктор требует объект, долгосрочная связь покупателя и имении
 
 }
