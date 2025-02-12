@@ -1,0 +1,6 @@
+[submodule "practice/practice/zoo_project"]
+	path = practice/practice/zoo_project
+	url = https://github.com/ProgrammerPeasant/zoo_project.git
+[submodule "practice/zoo_project"]
+	path = practice/zoo_project
+	url = https://github.com/ProgrammerPeasant/zoo_project.git
