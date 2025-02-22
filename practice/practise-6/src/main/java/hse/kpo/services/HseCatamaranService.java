@@ -19,6 +19,16 @@ public class HseCatamaranService {
 
     private final CustomerProvider customerProvider;
 
+    private final List<SalesObserver> observers = new ArrayList<>();
+
+    public void addObserver(SalesObserver observer) {
+        observers.add(observer);
+    }
+
+    private void notifyObserversForSale(Customer customer, ProductionTypes productType, int vin) {
+        observers.forEach(obs -> obs.onSale(customer, productType, vin));
+    }
+
     /**
      * Метод продажи катамаранов.
      */
@@ -31,6 +41,7 @@ public class HseCatamaranService {
                     var catamaran = catamaranProvider.takeCatamaran(customer);
                     if (Objects.nonNull(catamaran)) {
                         customer.setCatamaran(catamaran);
+                        notifyObserversForSale(customer, , catamaran.);
                     } else {
                         log.warn("No catamaran in CatamaranService");
                     }

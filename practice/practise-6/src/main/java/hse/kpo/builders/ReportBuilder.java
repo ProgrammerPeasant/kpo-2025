@@ -32,6 +32,8 @@ public class ReportBuilder {
         return this;
     }
 
+    public Observer
+
     /**
      * Метод для добавления информации о действиях в системе в отчет.
      *
