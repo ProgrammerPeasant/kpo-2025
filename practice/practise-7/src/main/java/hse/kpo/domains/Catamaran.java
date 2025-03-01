@@ -8,13 +8,13 @@ import lombok.ToString;
 /**
  * Класс хранящий информацию о катамаране.
  */
+@Getter
 @ToString
 public class Catamaran {
 
-    private Engine engine;
+    private final Engine engine;
 
-    @Getter
-    private int vin;
+    private final int vin;
 
     public Catamaran(int vin, Engine engine) {
         this.vin = vin;
