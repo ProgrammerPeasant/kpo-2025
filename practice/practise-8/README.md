@@ -3,13 +3,14 @@
 ## Цель занятия
 - Разобраться что такое DDD. Дополнить проект работой с файлами, а в частности формированием отчетов разных форматов.
 ## Требования к реализации
-1. Разделить сущности по доменам (машины и катамараны)
+1. Разделить сущности по доменам (машины, катамараны и покупатели)
 2. Добавить возможность экспорта отчетов в формате MARKDOWN и json.
 3. Добавить возможность экспорта транспорта в форматах csv и xml.
 ## Тестирование
 1. После выполнения программы у вас формируются отчеты.
 ## Задание на доработку
 - Добавить возможность добавления транспорта из отчета.
+- Добавить парсинг отчета (разделение команд внутри value)
 ## Пояснения к реализации
 Добавьте зависимость Jackson в build.gradle, для включение адаптера обычных классов в json формат:
 ```
@@ -166,9 +167,43 @@ public interface TransportExporter {
 void export(List<Transport> transports, Writer writer) throws IOException;
 }
 ```
-Пример экспорта для типов [csv](/transports.csv) и [xml](/transports.xml)
+
+Пример экспорта для типа [csv](/transports.csv):
+
+```
+String.format("%d,%s,%s\n",
+transport.getVin(),
+transport.getTransportType(),
+transport.getEngineType());
+```
+
+Пример экспорта для типа [xml](/transports.xml):
+```
+String.format("""
+<Vehicle>
+    <VIN>%d</VIN>
+    <Type>%s</Type>
+    <Engine>
+        <Type>%s</Type>
+    </Engine>
+</Vehicle>
+""",
+transport.getVin(),
+transport.getTransportType(),
+transport.getEngineType()
+)
+```
+
+Для добавления машин и катамаранов в фасаде можно использовать Stream.concat
+```
+List<Transport> transports = Stream.concat(
+carStorage.getCars().stream(),
+catamaranStorage.getCatamarans().stream())
+.toList();
+```
 
 <details> 
 <summary>Ссылки</summary>
-1. 
+1. https://javarush.com/quests/lectures/jru.module2.lecture31
+2. 
 </details>
