@@ -1,3 +1,6 @@
 [submodule "practice/hse-bank-system"]
 	path = practice/hse-bank-system
 	url = https://github.com/ProgrammerPeasant/hse-bank-system.git
+[submodule "practice/domain-driven-zoo"]
+	path = practice/domain-driven-zoo
+	url = https://github.com/programmerpeasant/domain-driven-zoo.git
