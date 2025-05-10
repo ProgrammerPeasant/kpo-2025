@@ -1,12 +1,27 @@
 plugins {
-    id("java")
-    id("com.google.protobuf") version "0.9.4"
-    id("org.springframework.boot") version "3.4.2"
+    java
+    checkstyle
+    jacoco
+    id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.google.protobuf") version "0.9.4"
 }
 
-group = "studying"
+group = "hse.kpo"
 version = "1.0-SNAPSHOT"
+
+checkstyle {
+    toolVersion = "10.13.0"
+    isIgnoreFailures = false
+    maxWarnings = 0
+    maxErrors = 200
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 configurations {
     compileOnly {
@@ -19,41 +34,37 @@ repositories {
 }
 
 dependencies {
+    // Spring
     implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
-
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    implementation("org.springframework.boot:spring-boot-starter-aop")
-
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
-
-    // gRPC dependencies
-    implementation("net.devh:grpc-server-spring-boot-starter:2.15.0.RELEASE")
-    implementation("io.grpc:grpc-protobuf:1.54.0")
-    implementation("io.grpc:grpc-stub:1.54.0")
-    implementation("net.devh:grpc-client-spring-boot-starter:2.15.0.RELEASE")
+    // gRPC
+    implementation("io.grpc:grpc-stub:1.62.2")
+    implementation("io.grpc:grpc-protobuf:1.62.2")
+    implementation("net.devh:grpc-client-spring-boot-starter:3.0.0.RELEASE")
     compileOnly("org.apache.tomcat:annotations-api:6.0.53")
 
     // Telegram
     implementation("org.telegram:telegrambots-spring-boot-starter:6.9.7.1")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+
+    // Testing
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.22.0"
+        artifact = "com.google.protobuf:protoc:3.25.1"
     }
     plugins {
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.54.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.62.2"
         }
     }
     generateProtoTasks {
@@ -65,6 +76,24 @@ protobuf {
     }
 }
 
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.compileJava {
+    dependsOn(tasks.generateProto)
+}
+
+// Добавляем генерацию proto в исходные пути
 sourceSets {
     main {
         java {
@@ -78,8 +107,4 @@ sourceSets {
 
 tasks.named("compileJava").configure {
     dependsOn("generateProto")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
