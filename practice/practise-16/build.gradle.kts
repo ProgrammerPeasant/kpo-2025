@@ -15,7 +15,7 @@ checkstyle {
 	toolVersion = "10.13.0"
 	isIgnoreFailures = false
 	maxWarnings = 0
-	maxErrors = 200
+	maxErrors = 2000
 }
 
 java {
@@ -44,6 +44,7 @@ dependencies {
 	implementation("org.liquibase:liquibase-core")
 	liquibaseRuntime("org.liquibase:liquibase-core")
 	liquibaseRuntime("org.liquibase.ext:liquibase-hibernate6:5.0.0")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
 

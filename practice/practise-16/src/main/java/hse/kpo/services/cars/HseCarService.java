@@ -3,21 +3,22 @@ package hse.kpo.services.cars;
 import hse.kpo.domains.Customer;
 import hse.kpo.domains.cars.Car;
 import hse.kpo.enums.ProductionTypes;
+import hse.kpo.interfaces.CustomerProvider;
 import hse.kpo.interfaces.cars.CarFactory;
+import hse.kpo.interfaces.cars.CarProvider;
 import hse.kpo.observers.Sales;
 import hse.kpo.observers.SalesObserver;
-import hse.kpo.interfaces.cars.CarProvider;
-import hse.kpo.interfaces.CustomerProvider;
+import hse.kpo.repositories.CarRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import hse.kpo.repositories.CarRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Сервис продажи машин.
@@ -84,10 +85,13 @@ public class HseCarService implements CarProvider{
         return carRepository.save(car);
     }
 
-    public Optional<Car> findByVin(Integer vin) {
+    @Cacheable(value = "cars", key = "#vin")
+    public Optional<Car> findByVin(Integer vin) throws InterruptedException {
+        Thread.sleep(2000);
         return carRepository.findById(vin);
     }
 
+    @CacheEvict(value = "cars", key = "#vin")
     public void deleteByVin(Integer vin) {
         carRepository.deleteById(vin);
     }

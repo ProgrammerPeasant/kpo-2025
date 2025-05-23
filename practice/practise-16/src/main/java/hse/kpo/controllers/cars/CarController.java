@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -34,7 +35,7 @@ public class CarController {
 
     @GetMapping("/{vin}")
     @Operation(summary = "Получить автомобиль по VIN")
-    public ResponseEntity<Car> getCarByVin(@PathVariable int vin) {
+    public ResponseEntity<Car> getCarByVin(@PathVariable int vin) throws InterruptedException {
         return carService.findByVin(vin)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -77,7 +78,7 @@ public class CarController {
 
     @PostMapping("/sell/{vin}")
     @Operation(summary = "Продать автомобиль по VIN")
-    public ResponseEntity<Object> sellCar(@PathVariable int vin) {
+    public ResponseEntity<Object> sellCar(@PathVariable int vin) throws InterruptedException {
         return carService.findByVin(vin).map(car -> {
             carService.deleteByVin(car.getVin());
             hseFacade.sell();
@@ -87,9 +88,10 @@ public class CarController {
 
     @PutMapping("/{vin}")
     @Operation(summary = "Обновить автомобиль")
+    @CacheEvict(value = "cars", key = "#vin")
     public ResponseEntity<Car> updateCar(
             @PathVariable int vin,
-            @Valid @RequestBody CarRequest request) {
+            @Valid @RequestBody CarRequest request) throws InterruptedException {
 
         return carService.findByVin(vin)
                 .map(existingCar -> {

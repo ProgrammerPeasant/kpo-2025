@@ -1,0 +1,3 @@
+[submodule "practice/sync-student-analyzer"]
+	path = practice/sync-student-analyzer
+	url = https://github.com/ProgrammerPeasant/sync-student-analyzer.git
