@@ -1,0 +1,3 @@
+[submodule "practice/PaymentOrderService"]
+	path = practice/PaymentOrderService
+	url = https://github.com/ProgrammerPeasant/PaymentOrderService
